@@ -64,7 +64,7 @@ func register(c *gin.Context) {
 		// If the user is created, set the token in a cookie and log the user in
 		token := generateSessionToken()
 		c.SetCookie("token", token, 3600, "", "", false, true)
-		c.Set("is_logged_in", true)
+		c.Set("is_logged_in", true) // Auth
 
 		render(c, gin.H{
 			"title":    "Successful registration & Login",
