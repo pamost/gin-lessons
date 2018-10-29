@@ -10,18 +10,10 @@ import (
 func showIndexPage(c *gin.Context) {
 	articles := getAllArticles()
 
-	// Вызовем метод HTML из Контекста Gin для обработки шаблона
-	c.HTML(
-		// Зададим HTTP статус 200 (OK)
-		http.StatusOK,
-		// Используем шаблон index.html
-		"index.html",
-		// Передадим данные в шаблон
-		gin.H{
-			"title":    "Home Page",
-			"articles": articles,
-		},
-	)
+	// Call the render function with the name of the template to render
+	render(c, gin.H{
+		"title": "Home Page",
+		"data":  articles}, "index.html")
 
 }
 
@@ -30,18 +22,10 @@ func getArticle(c *gin.Context) {
 	if articleID, err := strconv.Atoi(c.Param("article_id")); err == nil {
 		// Проверим существование топика
 		if article, err := getArticleByID(articleID); err == nil {
-			// Вызовем метод HTML из Контекста Gin для обработки шаблона
-			c.HTML(
-				// Зададим HTTP статус 200 (OK)
-				http.StatusOK,
-				// Используем шаблон index.html
-				"article.html",
-				// Передадим данные в шаблон
-				gin.H{
-					"title":    article.Title,
-					"article": article,
-				},
-			)
+			// Call the render function with the name of the template to render
+			render(c, gin.H{
+				"title": article.Title,
+				"data":  article}, "article.html")
 
 		} else {
 			// Если топика нет, прервём с ошибкой

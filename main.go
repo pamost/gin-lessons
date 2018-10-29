@@ -1,6 +1,8 @@
 package main
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,5 +22,21 @@ func main() {
 
 	// Запускаем приложение
 	router.Run()
+
+}
+
+// Render one of HTML, JSON or CSV based on the 'Accept' header of the request
+// If the header doesn't specify this, HTML is rendered, provided that
+// the template name is present
+func render(c *gin.Context, data gin.H, templateName string) {
+
+	switch c.Request.Header.Get("Accept") {
+	case "application/json":
+		c.JSON(http.StatusOK, data["data"]) // Respond with JSON
+	case "application/xml":
+		c.XML(http.StatusOK, data["data"]) // Respond with XML
+	default:
+		c.HTML(http.StatusOK, templateName, data) // Respond with HTML
+	}
 
 }
