@@ -1,29 +1,32 @@
-package main
+package handlers
 
 import (
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+
+	"gin-lessons/middleware"
+	"gin-lessons/models"
 )
 
-func showIndexPage(c *gin.Context) {
-	articles := getAllArticles()
+func ShowIndexPage(c *gin.Context) {
+	articles := models.GetAllArticles()
 
-	// Call the render function with the name of the template to render
-	render(c, gin.H{
+	// Call the middleware.Render function with the name of the template to middleware.Render
+	middleware.Render(c, gin.H{
 		"title": "Home Page",
 		"data":  articles}, "index.html")
 
 }
 
-func getArticle(c *gin.Context) {
+func GetArticle(c *gin.Context) {
 	// Проверим валидность ID
 	if articleID, err := strconv.Atoi(c.Param("article_id")); err == nil {
 		// Проверим существование топика
-		if article, err := getArticleByID(articleID); err == nil {
-			// Call the render function with the name of the template to render
-			render(c, gin.H{
+		if article, err := models.GetArticleByID(articleID); err == nil {
+			// Call the middleware.Render function with the name of the template to middleware.Render
+			middleware.Render(c, gin.H{
 				"title": article.Title,
 				"data":  article}, "article.html")
 
@@ -38,19 +41,19 @@ func getArticle(c *gin.Context) {
 	}
 }
 
-func showArticleCreationPage(c *gin.Context) {
-	// Call the render function with the name of the template to render
-	render(c, gin.H{
+func ShowArticleCreationPage(c *gin.Context) {
+	// Call the middleware.Render function with the name of the template to middleware.Render
+	middleware.Render(c, gin.H{
 		"title": "Create New Article"}, "create-article.html")
 }
 
-func createArticle(c *gin.Context) {
+func CreateArticle(c *gin.Context) {
 	// Obtain the POSTed title and content values
 	title := c.PostForm("title")
 	content := c.PostForm("content")
-	if a, err := createNewArticle(title, content); err == nil {
+	if a, err := models.CreateNewArticle(title, content); err == nil {
 		// If the article is created successfully, show success message
-		render(c, gin.H{
+		middleware.Render(c, gin.H{
 			"title": "Submission Successful",
 			"data":  a}, "submission-successful.html")
 	} else {

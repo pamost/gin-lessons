@@ -1,4 +1,4 @@
-package main
+package models
 
 import "errors"
 
@@ -17,12 +17,12 @@ var articleList = []article{
 }
 
 // Return a list of all the articles
-func getAllArticles() []article {
+func GetAllArticles() []article {
 	return articleList
 }
 
 // Fetch an article based on the ID supplied
-func getArticleByID(id int) (*article, error) {
+func GetArticleByID(id int) (*article, error) {
 	for _, a := range articleList {
 		if a.ID == id {
 			return &a, nil
@@ -32,7 +32,7 @@ func getArticleByID(id int) (*article, error) {
 }
 
 // Create a new article with the title and content provided
-func createNewArticle(title, content string) (*article, error) {
+func CreateNewArticle(title, content string) (*article, error) {
 	// Set the ID of a new article to one more than the number of articles
 	a := article{ID: len(articleList) + 1, Title: title, Content: content}
 	// Add the article to the list of articles

@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"math/rand"
@@ -6,6 +6,9 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+
+	"gin-lessons/middleware"
+	"gin-lessons/models"
 )
 
 func generateSessionToken() string {
@@ -15,22 +18,22 @@ func generateSessionToken() string {
 	return strconv.FormatInt(rand.Int63(), 16)
 }
 
-func showLoginPage(c *gin.Context) {
-	// Call the render function with the name of the template to render
-	render(c, gin.H{
+func ShowLoginPage(c *gin.Context) {
+	// Call the middleware.Render function with the name of the template to middleware.Render
+	middleware.Render(c, gin.H{
 		"title": "Login",
 	}, "login.html")
 }
-func performLogin(c *gin.Context) {
+func PerformLogin(c *gin.Context) {
 	// Obtain the POSTed username and password values
 	username := c.PostForm("username")
 	password := c.PostForm("password")
 	// Check if the username/password combination is valid
-	if isUserValid(username, password) {
+	if models.IsUserValid(username, password) {
 		// If the username/password is valid set the token in a cookie
 		token := generateSessionToken()
 		c.SetCookie("token", token, 3600, "", "", false, true)
-		render(c, gin.H{
+		middleware.Render(c, gin.H{
 			"title":    "Successful Login",
 			"username": username}, "login-successful.html")
 	} else {
@@ -42,31 +45,31 @@ func performLogin(c *gin.Context) {
 	}
 }
 
-func logout(c *gin.Context) {
+func Logout(c *gin.Context) {
 	// Clear the cookie
 	c.SetCookie("token", "", -1, "", "", false, true)
 	// Redirect to the home page
 	c.Redirect(http.StatusTemporaryRedirect, "/")
 }
 
-func showRegistrationPage(c *gin.Context) {
-	// Call the render function with the name of the template to render
-	render(c, gin.H{
+func ShowRegistrationPage(c *gin.Context) {
+	// Call the middleware.Render function with the name of the template to middleware.Render
+	middleware.Render(c, gin.H{
 		"title": "Register"}, "register.html")
 }
 
-func register(c *gin.Context) {
+func Register(c *gin.Context) {
 	// Obtain the POSTed username and password values
 	username := c.PostForm("username")
 	password := c.PostForm("password")
 
-	if _, err := registerNewUser(username, password); err == nil {
+	if _, err := models.RegisterNewUser(username, password); err == nil {
 		// If the user is created, set the token in a cookie and log the user in
 		token := generateSessionToken()
 		c.SetCookie("token", token, 3600, "", "", false, true)
 		c.Set("is_logged_in", true) // Auth
 
-		render(c, gin.H{
+		middleware.Render(c, gin.H{
 			"title":    "Successful registration & Login",
 			"username": username}, "login-successful.html")
 
