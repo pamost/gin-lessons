@@ -36,10 +36,13 @@ func render(c *gin.Context, data gin.H, templateName string) {
 	data["is_logged_in"] = loggedInInterface.(bool)
 
 	switch c.Request.Header.Get("Accept") {
+
 	case "application/json":
 		c.JSON(http.StatusOK, data["data"]) // Respond with JSON
+
 	case "application/xml":
 		c.XML(http.StatusOK, data["data"]) // Respond with XML
+
 	default:
 		c.HTML(http.StatusOK, templateName, data) // Respond with HTML
 	}
